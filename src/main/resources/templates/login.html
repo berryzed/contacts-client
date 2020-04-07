@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <title>로그인</title>
+    <th:block th:replace="resources :: resources"/>
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-align: center;
+            align-items: center;
+            padding-top: 40px;
+            padding-bottom: 40px;
+            background-color: #f5f5f5;
+        }
+
+        .form-signin {
+            width: 100%;
+            max-width: 330px;
+            padding: 15px;
+            margin: auto;
+        }
+        .form-signin .checkbox {
+            font-weight: 400;
+        }
+        .form-signin .form-control {
+            position: relative;
+            box-sizing: border-box;
+            height: auto;
+            padding: 10px;
+            font-size: 16px;
+        }
+        .form-signin .form-control:focus {
+            z-index: 2;
+        }
+        .form-signin input[type="text"] {
+            margin-bottom: -1px;
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+        .form-signin input[type="password"] {
+            margin-bottom: 10px;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+    </style>
+</head>
+<body class="text-center">
+<form th:action="@{/login/process}" method="POST" class="form-signin">
+<!--    <img class="mb-4" src="/docs/4.4/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">-->
+    <h1 class="h3 mb-3 font-weight-normal">주소록 앱 로그인</h1>
+    <label for="username" class="sr-only">아이디</label>
+    <input type="text" id="username" name="username" class="form-control" placeholder="아이디" required autofocus autocomplete="off">
+    <label for="password" class="sr-only">비밀번호</label>
+    <input type="password" id="password" name="password" class="form-control" placeholder="비밀번호" required>
+    <div class="mb-3">
+        <label>
+            <span th:if="${error}" th:text="${error}"></span>
+        </label>
+    </div>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">로그인</button>
+    <a th:href="@{/join}" class="btn btn-block">회원가입</a>
+    <!--    <p class="mt-5 mb-3 text-muted">&copy; 2017-2019</p>-->
+</form>
+<th:block th:replace="scripts :: scripts"/>
+</body>
+</html>
