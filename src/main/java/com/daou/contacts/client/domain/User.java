@@ -4,17 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.annotation.Transient;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.keygen.KeyGenerators;
 
+import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -23,19 +20,21 @@ import java.util.List;
 
 @Getter
 @Setter
-@Document("users")
+@Entity
+@Table
 public class User implements UserDetails {
 
     public static final String ROLE_USER = "ROLE_USER";
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
-    @Indexed(unique = true)
-    @Size(min = 2, max = 16)
+    @Size(min = 4, max = 16, message = "아이디는 {min}자 이상 {max}자 이하로 입력해 주세요.")
+    @Column(unique = true, nullable = false)
     private String username;
 
-    @Size(min = 2, max = 10)
+    @Size(min = 2, max = 20, message = "이름은 {min}자 이상 {max}자 이하로 입력해 주세요.")
     private String name;
 
     @JsonIgnore
@@ -45,10 +44,11 @@ public class User implements UserDetails {
     @JsonIgnore
     private String passwordConfirm;
 
-    @Size(max = 20)
+    @Size(max = 17, message = "전화 번호는 {max}자 이하로 입력해 주세요.")
     private String tel;
 
-    @Size(max = 100)
+    @Email(message = "이메일 형식으로 입력해 주세요.")
+    @Size(max = 50, message = "이메일 주소는 {max}자 이하로 입력해 주세요.")
     private String email;
 
     @JsonIgnore

@@ -1,60 +1,104 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sd="http://www.thymeleaf.org/spring-data" lang="ko">
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-    <title>주소록</title>
-    <style>
-        .sorted-desc::after, .sorted-asc::after {
-            float: right;
-        }
-
-        .sorted-desc::after{
-            content:"\25BC";
-        }
-
-        .sorted-asc::after{
-            content: "\25B2";
-        }
-    </style>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>연락처</title>
     <th:block th:replace="resources :: resources"/>
 </head>
-<body>
-<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-    <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">기술과제</a>
-    <input class="form-control form-control-dark w-100" type="text" placeholder="검색" aria-label="Search">
-    <ul class="navbar-nav px-3">
-        <li class="nav-item text-nowrap">
-            <a class="nav-link" th:href="@{/logout}">로그아웃</a>
-        </li>
-    </ul>
-</nav>
-<div class="container-scroller">
-    <div class="container-fluid page-body-wrapper">
-        <div class="main-panel">
-            <div class="content-wrapper">
-                <div class="row manage-panel">
-                    <div class="col-sm-12 col-md-8">
+<body class="hold-transition layout-top-nav">
+<div class="wrapper">
+
+    <!-- Navbar -->
+    <nav class="main-header navbar navbar-expand-md navbar-light navbar-white">
+        <div class="container">
+            <a th:href="@{/contacts/list}" class="navbar-brand">
+                <span class="brand-text font-weight-light">주소록 앱</span>
+            </a>
+
+            <button class="navbar-toggler order-1" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse order-3" id="navbarCollapse">
+                <!-- Left navbar links -->
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a th:href="@{/contacts/list}" class="nav-link active">주소록 관리</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a id="dropdownSubMenu2" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">중복 데이터 조회</a>
+                        <ul aria-labelledby="dropdownSubMenu2" class="dropdown-menu border-0 shadow">
+                            <li><a th:href="@{/contacts/duplicate} + '?type=TEL'" class="dropdown-item">전화번호 </a></li>
+                            <li><a th:href="@{/contacts/duplicate} + '?type=EMAIL'" class="dropdown-item">이메일 </a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/cgroups/list}" class="nav-link">그룹 관리</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Right navbar links -->
+            <ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
+                <li class="nav-item dropdown">
+                    <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle" th:text="${#authentication.principal.name}"></a>
+                    <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow">
+                        <li><a th:href="@{/logout}" class="dropdown-item">로그아웃 </a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <!-- /.navbar -->
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+
+                    </div>
+                </div>
+                <!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+
+        <!-- Main content -->
+        <div class="content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-8">
                         <div class="card">
-                            <div class="card-body">
-                                <h4 class="card-title">주소록</h4>
-                                <div class="mb-4">
-                                    <form th:action="@{/list}" method="GET" class="d-flex" th:object="${filter}">
+                            <div class="card-header">
+                                <h3 class="card-title"><span sd:page-size-selector="javascript"></span></h3>
+
+                                <div class="card-tools">
+                                    <form th:action="@{/contacts/list}" method="GET" class="d-flex" th:object="${filter}">
                                         <input th:if="${param.sort}" type="hidden" name="sort" th:value="${param.sort[0]}"/>
                                         <input th:if="${param.size}" type="hidden" name="size" th:value="${param.size[0]}"/>
-                                        <div class="flex-fill mr-1">
+
+                                        <div class="input-group input-group-sm mr-1" style="width: 150px;">
                                             <select th:field="*{FSearchType}" class="form-control form-control-sm">
                                                 <option th:each="i : ${searchTypes}" th:value="${i}" th:text="${i.getTitle()}"></option>
                                             </select>
                                         </div>
-                                        <input type="text" th:field="*{FKeyword}" class="form-control form-control-sm flex-fill mr-1"/>
-                                        <button type="submit" class="btn btn-primary btn-xs flex-fill">
-                                            <i class="fa fa-search"></i>검색
-                                        </button>
+                                        <div class="input-group input-group-sm" style="width: 150px;">
+                                            <input type="text" th:field="*{FKeyword}" class="form-control float-right">
+
+                                            <div class="input-group-append">
+                                                <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
+                                            </div>
+                                        </div>
                                     </form>
                                 </div>
-
-                                <form action="" method="post" class="data-list" th:attr="data-url=@{/}">
+                            </div>
+                            <!-- /.card-header -->
+                            <form action="" method="POST" class="data-list" th:attr="data-url=@{/contacts/}">
+                                <div class="card-body table-responsive p-0">
                                     <div class="mb-2 d-flex justify-content-end">
                                         <div class="dropdown mr-1">
                                             <button class="btn btn-success btn-sm dropdown-toggle" type="button" id="excelDropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -69,105 +113,127 @@
                                         <button type="button" class="btn btn-primary btn-sm btn-action btn-require-selected disabled mr-1" disabled="disabled" data-action="delete">
                                             <i class="fa fa-trash"></i>삭제
                                         </button>
-                                        <a th:href="@{/list}" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>추가</a>
-                                        <a th:href="@{/duplicate} + ${queryString}" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>중복번호확인</a>
+                                        <a th:href="@{/contacts/list}" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i>추가</a>
                                     </div>
-
-                                    <div class="mb-1">
-                                        <span sd:page-size-selector="javascript"></span>
-                                    </div>
-
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered table-center-all table-md">
-                                            <thead>
-                                            <tr>
-                                                <th style="width: 32px">
-                                                    <div class="form-check my-0">
-                                                        <label class="form-check-label ml-3">
-                                                            <input type="checkbox" class="form-check-input form-check-all"/>
-                                                        </label>
-                                                    </div>
-                                                </th>
-                                                <th><a sd:pagination-sort="name">이름</a></th>
-                                                <th><a sd:pagination-sort="tel">전화번호</a></th>
-                                                <th><a sd:pagination-sort="email">이메일</a></th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            <tr th:each="i : ${contacts}">
-                                                <td>
-                                                    <div class="form-check my-0">
-                                                        <label class="form-check-label ml-3">
-                                                            <input type="checkbox" class="form-check-input" name="ids" th:value="${i.id}"/>
-                                                        </label>
-                                                    </div>
-                                                </td>
-                                                <td><a th:href="@{/list/{id}(id=${i.id})} + ${queryString}" th:text="${i.name}"></a></td>
-                                                <td><a th:href="@{/list/{id}(id=${i.id})} + ${queryString}" th:text="${i.tel}"></a></td>
-                                                <td><a th:href="@{/list/{id}(id=${i.id})} + ${queryString}" th:text="${i.email}"></a></td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <div class="pt-3">
-                                        <nav class="d-flex justify-content-center">
-                                            <ul class="pagination" sd:pagination="full">
-                                                <li class="disabled"><a href="javascript:" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
-                                                <li class="active"><a href="javascript:">1 <span class="sr-only">(current)</span></a></li>
-                                            </ul>
-                                        </nav>
-                                        <div class="text-right">
-                                            <div sd:pagination-summary="">info</div>
-                                        </div>
-                                    </div>
-                                </form>
+                                    <table class="table table-sm table-hover text-nowrap">
+                                        <thead>
+                                        <tr>
+                                            <th style="width: 32px">
+                                                <div class="form-check">
+                                                    <input class="form-check-input position-static form-check-all" type="checkbox" aria-label="...">
+                                                </div>
+                                            </th>
+                                            <th><a sd:pagination-sort="name">이름</a></th>
+                                            <th><a sd:pagination-sort="tel">전화번호</a></th>
+                                            <th><a sd:pagination-sort="email">이메일</a></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr th:each="i : ${contacts}">
+                                            <td>
+                                                <div class="form-check">
+                                                    <input class="form-check-input position-static" type="checkbox" name="ids" th:value="${i.id}" aria-label="...">
+                                                </div>
+                                            </td>
+                                            <td><a th:href="@{/contacts/list/{id}(id=${i.id})} + ${queryString}" th:text="${i.name}"></a></td>
+                                            <td><a th:href="@{/contacts/list/{id}(id=${i.id})} + ${queryString}" th:text="${i.tel}"></a></td>
+                                            <td><a th:href="@{/contacts/list/{id}(id=${i.id})} + ${queryString}" th:text="${i.email}"></a></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- /.card-body -->
+                            </form>
+                            <div class="card-footer clearfix">
+                                <div class="float-left">
+                                    <div sd:pagination-summary="">info</div>
+                                </div>
+                                <ul class="pagination pagination-sm m-0 float-right" sd:pagination="full">
+                                    <li class="disabled"><a href="javascript:" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+                                    <li class="active"><a href="javascript:">1 <span class="sr-only">(current)</span></a></li>
+                                </ul>
                             </div>
+
+                            <!--                            <div class="overlay dark">-->
+                            <!--                                <i class="fas fa-2x fa-sync-alt fa-spin"></i>-->
+                            <!--                            </div>-->
                         </div>
+                        <!-- /.card -->
                     </div>
-                    <div class="col-sm-12 col-md-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h4 class="card-title">주소록 관리</h4>
-                                <form th:action="@{/save}" method="POST" th:object="${contact}" class="forms-sample">
+
+                    <div class="col-4">
+                        <div class="card card-primary">
+                            <!--                            <div class="card-header">-->
+                            <!--                                <h3 class="card-title">관리</h3>-->
+                            <!--                            </div>-->
+                            <!-- /.card-header -->
+                            <!-- form start -->
+                            <form th:action="@{/contacts/save}" method="POST" th:object="${contact}" role="form">
+                                <div class="card-body">
                                     <input type="hidden" th:field="*{id}"/>
 
                                     <div class="form-group">
-                                        <label>이름<i class="fa fa-asterisk required-icon"></i></label>
-                                        <input type="text" th:field="*{name}" class="form-control" required="required" autocomplete="off" />
+                                        <label th:for="name">이름</label>
+                                        <input type="text" th:field="*{name}" class="form-control" minlength="2" maxlength="16" required="required" autocomplete="off" />
                                         <span th:errors="*{name}" class="field-error text-warning"></span>
                                     </div>
 
                                     <div class="form-group">
-                                        <label>전화번호<i class="fa fa-asterisk required-icon"></i></label>
-                                        <input type="tel" th:field="*{tel}" class="form-control" autocomplete="off" />
+                                        <label th:for="tel">전화번호</label>
+                                        <input type="tel" th:field="*{tel}" class="form-control" maxlength="17" autocomplete="off" />
                                         <span th:errors="*{tel}" class="field-error text-warning"></span>
                                     </div>
 
                                     <div class="form-group">
-                                        <label>이메일<i class="fa fa-asterisk required-icon"></i></label>
-                                        <input type="email" th:field="*{email}" class="form-control" autocomplete="off" />
+                                        <label th:for="email">이메일</label>
+                                        <input type="email" th:field="*{email}" class="form-control" maxlength="50" autocomplete="off" />
                                         <span th:errors="*{email}" class="field-error text-warning"></span>
                                     </div>
 
                                     <div class="form-group">
-                                        <label th:for="memo">설명</label>
-                                        <textarea th:field="*{memo}" class="form-control" rows="3" placeholder="100자 이내로 입력해 주세요."></textarea>
+                                        <label th:for="memo">메모</label>
+                                        <textarea th:field="*{memo}" class="form-control" rows="3" placeholder="125자 이내로 입력해 주세요."></textarea>
                                         <span th:errors="*{memo}" class="field-error text-warning"></span>
                                     </div>
 
-                                    <div class="text-center">
-                                        <button type="submit" class="btn btn-primary btn-md mr-2" th:text="*{id != null} ? '수정' : '추가'"></button>
-                                        <a th:href="@{/list} + ${queryString}" class="btn btn-light btn-md">취소</a>
+                                    <div class="form-group">
+                                        <label th:for="cGroup">그룹</label>
+                                        <select th:field="*{cGroup.id}" class="form-control">
+                                            <option th:each="g : ${cGroups}" th:value="${g.id}"
+                                                    th:text="${g.name}"></option>
+                                        </select>
+                                        <span th:errors="*{cGroup}" class="field-error text-warning"></span>
                                     </div>
-                                </form>
-                            </div>
+                                </div>
+                                <!-- /.card-body -->
+
+                                <div class="card-footer">
+                                    <button type="submit" class="btn btn-primary" th:text="*{id != null} ? '수정' : '추가'"></button>
+                                </div>
+                            </form>
                         </div>
+                        <!-- /.card -->
                     </div>
                 </div>
-            </div>
+                <!-- /.row -->
+            </div><!-- /.container-fluid -->
         </div>
+        <!-- /.content -->
     </div>
+    <!-- /.content-wrapper -->
+
+    <!-- Main Footer -->
+<!--    <footer class="main-footer">-->
+<!--        &lt;!&ndash; To the right &ndash;&gt;-->
+<!--        <div class="float-right d-none d-sm-inline">-->
+<!--            Anything you want-->
+<!--        </div>-->
+<!--        &lt;!&ndash; Default to the left &ndash;&gt;-->
+<!--        <strong>Copyright &copy; 2014-2019 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.-->
+<!--    </footer>-->
 </div>
+<!-- ./wrapper -->
+
 <th:block th:replace="scripts :: scripts"/>
 </body>
 </html>

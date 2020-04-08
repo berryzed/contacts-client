@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sd="http://www.thymeleaf.org/spring-data" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>그룹</title>
+    <th:block th:replace="resources :: resources"/>
+</head>
+<body class="hold-transition layout-top-nav">
+<div class="wrapper">
+
+    <!-- Navbar -->
+    <nav class="main-header navbar navbar-expand-md navbar-light navbar-white">
+        <div class="container">
+            <a th:href="@{/contacts/list}" class="navbar-brand">
+                <span class="brand-text font-weight-light">주소록 앱</span>
+            </a>
+
+            <button class="navbar-toggler order-1" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse order-3" id="navbarCollapse">
+                <!-- Left navbar links -->
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a th:href="@{/contacts/list}" class="nav-link">주소록 관리</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a id="dropdownSubMenu2" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">중복 데이터 조회</a>
+                        <ul aria-labelledby="dropdownSubMenu2" class="dropdown-menu border-0 shadow">
+                            <li><a th:href="@{/contacts/duplicate} + '?type=TEL'" class="dropdown-item">전화번호 </a></li>
+                            <li><a th:href="@{/contacts/duplicate} + '?type=EMAIL'" class="dropdown-item">이메일 </a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/cgroups/list}" class="nav-link active">그룹 관리</a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Right navbar links -->
+            <ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
+                <li class="nav-item dropdown">
+                    <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle" th:text="${#authentication.principal.name}"></a>
+                    <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow">
+                        <li><a th:href="@{/logout}" class="dropdown-item">로그아웃 </a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <!-- /.navbar -->
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+
+                    </div>
+                </div>
+                <!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content-header -->
+
+        <!-- Main content -->
+        <div class="content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title"><span sd:page-size-selector="javascript"></span></h3>
+
+                                <div class="card-tools">
+                                    그룹 삭제 시 등록된 연락처도 함께 삭제됩니다.
+                                </div>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body table-responsive p-0">
+                                <table class="table table-sm table-hover text-nowrap">
+                                    <thead>
+                                    <tr>
+                                        <th>그룹명</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="i : ${cgroups}">
+                                        <td><a th:href="@{/cgroups/list/{id}(id=${i.id})} + ${queryString}" th:text="${i.name}"></a></td>
+                                        <td><a th:href="@{/cgroups/delete/{id}(id=${i.id})} + ${queryString}">삭제</a></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.card-body -->
+                            <div class="card-footer clearfix">
+                                <div class="float-left">
+                                    <div sd:pagination-summary="">info</div>
+                                </div>
+                                <ul class="pagination pagination-sm m-0 float-right" sd:pagination="full">
+                                    <li class="disabled"><a href="javascript:" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+                                    <li class="active"><a href="javascript:">1 <span class="sr-only">(current)</span></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                    <div class="col-4">
+                        <div class="card card-primary">
+                            <form th:action="@{/cgroups/save}" method="POST" th:object="${cGroup}" role="form">
+                                <div class="card-body">
+                                    <input type="hidden" th:field="*{id}"/>
+
+                                    <div class="form-group">
+                                        <label th:for="name">그룹명</label>
+                                        <input type="text" th:field="*{name}" class="form-control" minlength="2" maxlength="16" required="required" autocomplete="off" />
+                                        <span th:errors="*{name}" class="field-error text-warning"></span>
+                                    </div>
+                                </div>
+                                <!-- /.card-body -->
+
+                                <div class="card-footer">
+                                    <button type="submit" class="btn btn-primary" th:text="*{id != null} ? '수정' : '추가'"></button>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- /.card -->
+                    </div>
+                </div>
+                <!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+    <!-- Main Footer -->
+<!--    <footer class="main-footer">-->
+<!--        &lt;!&ndash; To the right &ndash;&gt;-->
+<!--        <div class="float-right d-none d-sm-inline">-->
+<!--            Anything you want-->
+<!--        </div>-->
+<!--        &lt;!&ndash; Default to the left &ndash;&gt;-->
+<!--        <strong>Copyright &copy; 2014-2019 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.-->
+<!--    </footer>-->
+</div>
+<!-- ./wrapper -->
+
+<th:block th:replace="scripts :: scripts"/>
+</body>
+</html>

@@ -13,8 +13,8 @@ public class RestTemplateConfig {
     @Bean
     public RestTemplate getCustomRestTemplate() {
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-        requestFactory.setConnectTimeout(2 * 1000); // 연결
-        requestFactory.setReadTimeout(120 * 1000); // 읽기
+        requestFactory.setConnectTimeout(2_000); // 연결
+        requestFactory.setReadTimeout(20_000); // 읽기
 
         HttpClient httpClient = HttpClientBuilder.create()
                 .setMaxConnTotal(200) // 최대 연결

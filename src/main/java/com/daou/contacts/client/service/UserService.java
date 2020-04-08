@@ -1,7 +1,9 @@
 package com.daou.contacts.client.service;
 
-import com.daou.contacts.client.repository.UserRepository;
 import com.daou.contacts.client.domain.User;
+import com.daou.contacts.client.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,11 +15,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService implements UserDetailsService {
 
-    private final UserRepository userRepository;
-
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    @Autowired
+    private UserRepository userRepository;
 
     public void save(User user) {
         userRepository.save(user);
@@ -45,5 +44,12 @@ public class UserService implements UserDetailsService {
     public boolean isUserLogged() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return !(authentication instanceof AnonymousAuthenticationToken);
+    }
+
+    public HttpHeaders getAuthHeaders() {
+        User loggedUser = getLoggedUser();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + loggedUser.getAccessToken());
+        return headers;
     }
 }

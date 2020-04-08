@@ -8,7 +8,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public enum SearchType {
 
-	NAME("이름"), TEL("전화번호"), EMAIL("이메일"), MEMO("메모"), GROUP("그룹");
+	NAME("이름"), TEL("전화번호"), EMAIL("이메일"), MEMO("메모");
 
 	private String title;
 }
